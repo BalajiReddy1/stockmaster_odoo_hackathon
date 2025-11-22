@@ -69,8 +69,20 @@ const Navbar = ({ onToggleSidebar }) => {
             <Menu className="h-5 w-5" />
           </Button>
 
+          {/* Mobile Logo - visible when sidebar is hidden */}
+          <div className="flex items-center space-x-2 lg:hidden">
+            <img 
+              src="/logof.png" 
+              alt="Inventora Logo" 
+              className="h-6 w-6 object-contain"
+            />
+            <span className="text-lg font-bold text-gray-900">
+              Inventora
+            </span>
+          </div>
+
           {/* Page Title - will be dynamic */}
-          <h1 className="text-xl font-semibold text-gray-900 hidden sm:block">
+          <h1 className="text-xl font-semibold text-gray-900 hidden sm:block lg:block">
             Dashboard
           </h1>
         </div>

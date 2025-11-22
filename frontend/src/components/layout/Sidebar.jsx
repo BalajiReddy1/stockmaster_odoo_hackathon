@@ -108,14 +108,13 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* Sidebar content */}
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">I</span>
-              </div>
-              <span className="text-xl font-bold text-gray-900">
-                Inventora
-              </span>
+          <div className="flex items-center justify-center px-2 py-2 border-b border-gray-200">
+            <div className="h-14">
+              <img 
+                src="/logof.png" 
+                alt="Inventora Logo" 
+                className="h-full w-full object-contain"
+              />
             </div>
           </div>
 
