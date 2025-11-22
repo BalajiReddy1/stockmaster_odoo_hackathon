@@ -10,6 +10,11 @@ router.post('/login', authController.login);
 router.post('/refresh', authController.refreshToken);
 router.post('/logout', authController.logout);
 
+// Forgot password flow
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/verify-otp', authController.verifyOTP);
+router.post('/reset-password', authController.resetPassword);
+
 // Protected routes
 router.get('/profile', authenticate, authController.getProfile);
 

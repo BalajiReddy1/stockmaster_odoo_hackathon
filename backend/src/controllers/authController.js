@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const prisma = require('../config/database');
 const TokenService = require('../utils/tokenService');
+const OTPService = require('../utils/otpService');
+const emailService = require('../utils/emailService');
 const { validateRequest, registerSchema, loginSchema } = require('../middleware/validation');
 
 // Cookie options
@@ -62,6 +64,13 @@ const register = async (req, res) => {
   });
   
   res.cookie('refreshToken', refreshToken, getCookieOptions());
+
+  // Send welcome email (optional)
+  try {
+    await emailService.sendWelcomeEmail(user.email, user.name);
+  } catch (error) {
+    console.error('Failed to send welcome email:', error);
+  }
   
   res.status(201).json({
     success: true,
@@ -238,10 +247,175 @@ const getProfile = async (req, res) => {
   });
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email is required'
+    });
+  }
+  
+  // Find user by email
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  
+  if (!user) {
+    // Don't reveal that user doesn't exist for security
+    return res.json({
+      success: true,
+      message: 'If an account with that email exists, we have sent a password reset code.'
+    });
+  }
+  
+  if (!user.isActive) {
+    return res.status(400).json({
+      success: false,
+      message: 'Account is deactivated'
+    });
+  }
+  
+  try {
+    // Generate and store OTP
+    const otp = await OTPService.createOTP(user.id, 10); // 10 minutes expiry
+    
+    // Send OTP via email
+    await emailService.sendOTP(user.email, otp, user.name);
+    
+    res.json({
+      success: true,
+      message: 'Password reset code has been sent to your email'
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to send password reset code'
+    });
+  }
+};
+
+const verifyOTP = async (req, res) => {
+  const { email, otp } = req.body;
+  
+  if (!email || !otp) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email and OTP are required'
+    });
+  }
+  
+  // Find user
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found'
+    });
+  }
+  
+  // Verify OTP
+  const isValidOTP = await OTPService.verifyOTP(user.id, otp);
+  
+  if (!isValidOTP) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid or expired OTP'
+    });
+  }
+  
+  res.json({
+    success: true,
+    message: 'OTP verified successfully'
+  });
+};
+
+const resetPassword = async (req, res) => {
+  const { email, otp, newPassword } = req.body;
+  
+  if (!email || !otp || !newPassword) {
+    return res.status(400).json({
+      success: false,
+      message: 'Email, OTP, and new password are required'
+    });
+  }
+  
+  // Validate new password
+  if (newPassword.length < 8) {
+    return res.status(400).json({
+      success: false,
+      message: 'Password must be at least 8 characters long'
+    });
+  }
+  
+  // Find user
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found'
+    });
+  }
+  
+  // Verify OTP
+  const isValidOTP = await OTPService.verifyOTP(user.id, otp);
+  
+  if (!isValidOTP) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid or expired OTP'
+    });
+  }
+  
+  try {
+    // Hash new password
+    const saltRounds = 12;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    
+    // Update user password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword }
+    });
+    
+    // Delete the used OTP
+    await OTPService.deleteOTP(user.id, otp);
+    
+    // Send password change notification
+    try {
+      await emailService.sendPasswordChangeNotification(user.email, user.name);
+    } catch (error) {
+      console.error('Failed to send password change notification:', error);
+    }
+    
+    res.json({
+      success: true,
+      message: 'Password reset successfully'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to reset password'
+    });
+  }
+};
+
 module.exports = {
   register: [validateRequest(registerSchema), register],
   login: [validateRequest(loginSchema), login],
   refreshToken,
   logout,
-  getProfile
+  getProfile,
+  forgotPassword,
+  verifyOTP,
+  resetPassword
 };

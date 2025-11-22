@@ -1,11 +1,73 @@
-import React from 'react'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 
-const App = () => {
+// Import pages
+import LoginPage from '@/pages/auth/LoginPage';
+import SignUpPage from '@/pages/auth/SignUpPage';
+import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
+import OTPVerificationPage from '@/pages/auth/OTPVerificationPage';
+import DashboardPage from '@/pages/DashboardPage';
+
+// Protected Route Component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  // Show loading spinner while checking authentication
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+  
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
+};
+
+// App Routes Component (inside AuthProvider)
+const AppRoutes = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">Hello, Vite with React and Tailwind CSS!</h1>
-    </div>
-  )
+    <Routes>
+      {/* Public routes */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/verify-otp" element={<OTPVerificationPage />} />
+      
+      {/* Protected routes */}
+      <Route path="/dashboard" element={
+        <ProtectedRoute>
+          <DashboardPage />
+        </ProtectedRoute>
+      } />
+      
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <AppRoutes />
+          
+          {/* Toast notifications */}
+          <Toaster position="top-right" richColors />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;

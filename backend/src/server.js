@@ -1,6 +1,11 @@
 require('dotenv').config();
 require('express-async-errors');
 
+// Set NODE_ENV to development if not set
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'development';
+}
+
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -10,6 +15,7 @@ const rateLimit = require('express-rate-limit');
 
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
+const emailRoutes = require('./routes/email');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,19 +23,27 @@ const PORT = process.env.PORT || 5000;
 // Security middleware
 app.use(helmet());
 
-// Rate limiting
+// Rate limiting (more lenient for development)
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 100, // limit each IP to 100 requests per windowMs
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 1000, // increased to 1000 requests per windowMs for development
   message: 'Too many requests from this IP, please try again later.',
+  skip: (req) => {
+    // Skip rate limiting for development environment
+    return process.env.NODE_ENV === 'development';
+  },
 });
 app.use(limiter);
 
-// CORS configuration
+// CORS configuration (simplified for development)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.NODE_ENV === 'development' 
+    ? true // Allow all origins in development
+    : [process.env.FRONTEND_URL || 'http://localhost:5173'],
   credentials: true,
   optionsSuccessStatus: 200,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
 }));
 
 // Body parsing middleware
@@ -53,6 +67,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
+app.use('/api/email', emailRoutes);
 
 // 404 handler
 app.use(notFound);
