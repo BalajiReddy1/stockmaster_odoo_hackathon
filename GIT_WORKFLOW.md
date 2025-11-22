@@ -166,20 +166,30 @@ git merge feature/delivery-operations
 git push origin master
 ```
 
-### 9. **Alternative: Pull Request Workflow** (Recommended)
+### 9. **Direct Merge Workflow** (For Collaborators)
 
 ```bash
-# Each person works in their branch
-git checkout -b feature/delivery-operations
+# You work in balaji-working branch
+git checkout balaji-working
+git add .
+git commit -m "feat(delivery): your changes"
+git push origin balaji-working
 
-# Push branch to GitHub
-git push origin feature/delivery-operations
+# Teammate works in their branch or master
 
-# Create Pull Request on GitHub
-# Teammate reviews your code
-# GitHub will show conflicts before merging
-# Resolve conflicts on GitHub or locally
-# Merge PR when approved
+# When ready to merge:
+# 1. Pull latest master
+git checkout master
+git pull origin master
+
+# 2. Merge your branch
+git merge balaji-working
+
+# 3. Resolve any conflicts if needed
+# 4. Push to master
+git push origin master
+
+# 5. Tell teammate: "Merged delivery to master, please pull"
 ```
 
 ## Quick Commands Reference
