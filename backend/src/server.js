@@ -16,6 +16,10 @@ const rateLimit = require('express-rate-limit');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
 const emailRoutes = require('./routes/email');
+const deliveryRoutes = require('./routes/delivery');
+const customerRoutes = require('./routes/customers');
+const locationRoutes = require('./routes/locations');
+const productRoutes = require('./routes/products');
 const inventoryRoutes = require('./routes/inventoryRoutes');
 
 const app = express();
@@ -69,6 +73,10 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/deliveries', deliveryRoutes);
+app.use('/api/customers', customerRoutes);
+app.use('/api/locations', locationRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/inventory', inventoryRoutes);
 
 // 404 handler

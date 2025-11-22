@@ -60,7 +60,6 @@ model Product {
   id                String              @id @default(cuid())
   name              String
   sku               String              @unique
-  code              String?             @unique
   description       String?
   categoryId        String?
   category          ProductCategory?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)

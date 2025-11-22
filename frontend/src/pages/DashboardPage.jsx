@@ -13,11 +13,14 @@ import {
   TrendingUp,
   BarChart3,
   Plus,
-  ArrowRight
+  ArrowRight,
+  Truck
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardPage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -260,7 +263,7 @@ const DashboardPage = () => {
           <CardTitle>Quick Actions</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <Button variant="outline" className="h-20 flex flex-col space-y-2">
               <Plus className="h-6 w-6" />
               <span className="text-sm">Add Stock</span>
@@ -279,6 +282,15 @@ const DashboardPage = () => {
             <Button variant="outline" className="h-20 flex flex-col space-y-2">
               <BarChart3 className="h-6 w-6" />
               <span className="text-sm">View Reports</span>
+            </Button>
+
+            <Button 
+              onClick={() => navigate('/delivery')} 
+              variant="default" 
+              className="h-20 flex flex-col space-y-2 bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Truck className="h-6 w-6" />
+              <span className="text-sm">Delivery Ops</span>
             </Button>
           </div>
         </CardContent>

@@ -13,6 +13,9 @@
     "db:reset": "prisma migrate reset",
     "db:seed": "node prisma/seed.js"
   },
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "keywords": [
     "inventory",
     "management",
