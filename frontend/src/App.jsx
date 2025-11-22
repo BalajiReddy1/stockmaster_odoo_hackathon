@@ -9,6 +9,8 @@ import SignUpPage from '@/pages/auth/SignUpPage';
 import ForgotPasswordPage from '@/pages/auth/ForgotPasswordPage';
 import OTPVerificationPage from '@/pages/auth/OTPVerificationPage';
 import DashboardPage from '@/pages/DashboardPage';
+import DeliveryPage from '@/pages/DeliveryPage';
+import DeliveryDetailPage from '@/pages/DeliveryDetailPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -45,6 +47,16 @@ const AppRoutes = () => {
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <DashboardPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/delivery" element={
+        <ProtectedRoute>
+          <DeliveryPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/delivery/:id" element={
+        <ProtectedRoute>
+          <DeliveryDetailPage />
         </ProtectedRoute>
       } />
       

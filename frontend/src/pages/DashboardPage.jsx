@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut, User, Package, Warehouse } from 'lucide-react';
+import { LogOut, User, Package, Warehouse, Truck, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -63,9 +63,16 @@ const DashboardPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 mb-4">
                   You are successfully authenticated and can now access the Inventora Inventory Management System.
                 </p>
+                <div className="flex gap-3">
+                  <Button onClick={() => navigate('/delivery')} variant="default">
+                    <Truck className="h-4 w-4 mr-2" />
+                    Delivery Operations
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
 
