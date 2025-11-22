@@ -1081,34 +1081,6 @@ if (stockLocation.quantity < product.reorderLevel) {
 
 ---
 
-## 👥 Team
-
-### Hackathon Team - StockMaster
-
-This project was built as a collaborative effort for the Odoo Hackathon:
-
-- **Balaji** - Full-stack developer
-  - Delivery operations module
-  - Backend API development
-  - Database schema design
-  - Authentication system
-
-- **Teammate** - Full-stack developer
-  - Inventory management module
-  - Warehouse management features
-  - Dashboard analytics
-  - Stock overview pages
-
-**Repository**: [stockmaster_odoo_hackathon](https://github.com/BalajiReddy1/stockmaster_odoo_hackathon)
-
----
-
-## 📝 License
-
-This project is licensed under the ISC License.
-
----
-
 ## 🙏 Acknowledgments
 
 - **Odoo Hackathon** for the opportunity and inspiration
