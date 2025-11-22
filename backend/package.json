@@ -10,7 +10,8 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "db:seed": "node prisma/seed.js"
   },
   "keywords": [
     "inventory",
@@ -34,7 +35,8 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "nodemailer": "^7.0.10"
+    "nodemailer": "^7.0.10",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
